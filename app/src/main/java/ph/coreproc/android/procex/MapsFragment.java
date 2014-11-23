@@ -54,6 +54,10 @@ public class MapsFragment extends Fragment implements
     private String mProvince;
     private ProgressBar mLocationProgressBar;
     private Button mLocationButton;
+    private HashMap<String, String> mParams;
+    private HttpClient mHttpClient;
+    private TextView mCategoryTextView;
+    private String mCategory;
 
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
@@ -79,6 +83,8 @@ public class MapsFragment extends Fragment implements
 
         mLocationClient = new LocationClient(mContext, this, this);
         mGeocoder = new Geocoder(mContext, Locale.ENGLISH);
+        mParams = new HashMap<String, String>();
+        mHttpClient = new HttpClient(mContext);
 
         // Layouts
         mProjectsTextView = (TextView) rootView.findViewById(R.id.projectsTextView);
@@ -86,6 +92,7 @@ public class MapsFragment extends Fragment implements
         mApprovedProjectsTextView = (TextView) rootView.findViewById(R.id.approvedProjectsTextView);
         mSpentAmountTextView = (TextView) rootView.findViewById(R.id.spentAmountTextView);
         mProvinceTextView = (TextView) rootView.findViewById(R.id.provinceTextView);
+        mCategoryTextView = (TextView) rootView.findViewById(R.id.categoryTextView);
         mLocationProgressBar = (ProgressBar) rootView.findViewById(R.id.locationProgressBar);
 
         setUpMapIfNeeded();
@@ -118,7 +125,7 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        //setUpMapIfNeeded();
     }
 
     private void setUpMapIfNeeded() {
@@ -148,15 +155,15 @@ public class MapsFragment extends Fragment implements
 
     private void getData(LatLng target) {
         Log.i("procex", "Getting location");
-        mProvince = geocodeLatLng(target);
+        geocodeLatLng(target);
+        executeApiCall();
+    }
 
+    private void executeApiCall() {
         try {
-            URI uri = new URI("https", "procex.coreproc.ph", "/api/search/from-location", null);
+            URI uri = new URI("https", "procex.coreproc.ph", "/api/search/chris-max-special", null);
 
-            HttpClient httpClient = new HttpClient(mContext);
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("province", mProvince);
-            httpClient.get(uri.toString(), params, new HttpClientCallback() {
+            mHttpClient.get(uri.toString(), mParams, new HttpClientCallback() {
                 @Override
                 public void onStart() {
                     Log.i("procex", "starting http call");
@@ -184,22 +191,28 @@ public class MapsFragment extends Fragment implements
                     double budgetAmount = meta.get("total_budget_amount").getAsDouble();
                     int projects = meta.get("total_projects").getAsInt();
                     int approvedProjects = meta.get("total_approved_projects").getAsInt();
+                    double spentAmount = meta.get("total_spent_amount").getAsDouble();
 
                     mBudgetAmountTextView.setText("" + numberToMoney(budgetAmount));
+                    mSpentAmountTextView.setText("" + numberToMoney(spentAmount));
                     mProjectsTextView.setText("" + numberToFormat(projects));
                     mApprovedProjectsTextView.setText("" + numberToFormat(approvedProjects));
 
                     mProvinceTextView.setText(mProvince);
+
+                    if (mCategory != null) {
+                        mCategoryTextView.setText(mCategory);
+                    } else {
+                        mCategoryTextView.setText("");
+                    }
                 }
             });
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    private String geocodeLatLng(LatLng target) {
+    private void geocodeLatLng(LatLng target) {
         try {
 
             //Place your latitude and longitude
@@ -209,14 +222,14 @@ public class MapsFragment extends Fragment implements
 
                 Address fetchedAddress = addresses.get(0);
 
-                String address = fetchedAddress.getAddressLine(fetchedAddress.getMaxAddressLineIndex() - 1);
-                Log.i("procex", "I am at: " + address);
+                mProvince = fetchedAddress.getAddressLine(fetchedAddress.getMaxAddressLineIndex() - 1);
+                Log.i("procex", "I am at: " + mProvince);
 
-                return address;
+                mParams.put("province", mProvince);
 
             } else {
                 Log.e("procex", "no location found");
-                return "Metro Manila";
+                mParams.put("province", "Metro Manila");
 
             }
 
@@ -226,7 +239,7 @@ public class MapsFragment extends Fragment implements
             Toast.makeText(getActivity(), "Could not get address..!", Toast.LENGTH_LONG).show();
         }
 
-        return "Metro Manila";
+        mParams.put("province", "Metro Manila");
     }
 
     @Override
@@ -247,5 +260,17 @@ public class MapsFragment extends Fragment implements
     private String numberToFormat(int number) {
         DecimalFormat df = new DecimalFormat("#,###,###");
         return df.format(number);
+    }
+
+    public void setCategory(String item) {
+        mParams.put("category", item);
+        mCategory = item;
+        executeApiCall();
+    }
+
+    public void removeCategory() {
+        mParams.remove("category");
+        mCategory = null;
+        executeApiCall();
     }
 }

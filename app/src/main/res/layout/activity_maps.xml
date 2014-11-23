@@ -4,20 +4,35 @@
     android:layout_height="match_parent">
 
 
-    <fragment
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/map"
-        android:layout_above="@+id/infoRelativeLayout"
-        tools:context=".MapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:layout_above="@+id/infoRelativeLayout">
+
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/map"
+
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_map_target"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/box_shadow"
         android:padding="12dp"
-        android:hint="Search for procurement projects"
+        android:hint="Search for a province"
         android:layout_margin="16dp" />
 
     <LinearLayout
@@ -36,6 +51,12 @@
             android:text="Searching.."
             android:textSize="30dp"
             android:fontFamily="sans-serif-light" />
+
+        <TextView
+            android:id="@+id/categoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
 
         <LinearLayout
             android:layout_width="match_parent"
