@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -47,6 +48,7 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Please wait ...");
         mContext = this;
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -57,30 +59,31 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        mMapsFragment = MapsFragment.newInstance();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mMapsFragment)
+                .commit();
+
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        mMapsFragment = MapsFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, mMapsFragment)
-                .commit();
-    }
+        switch (position) {
+            case 0:
 
-    public void onSectionAttached(int number) {
-        switch (number) {
+                break;
             case 1:
-                mTitle = getString(R.string.title_section1);
+                Intent intent = new Intent(mContext, AboutActivity.class);
+                startActivity(intent);
                 break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
+            default:
                 break;
         }
+
     }
 
     public void restoreActionBar() {

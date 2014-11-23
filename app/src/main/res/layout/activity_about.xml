@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,11 +6,21 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="ph.coreproc.android.procex.AboutActivity">
 
     <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="ProcEx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center" />
 
-</RelativeLayout>
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ProcEx is the most awesome way to browse and analyze PHILGEPS data on bids and stuff.\n\nOn a serious note, ProcEx allows the average Filipino citizen to browse through the regions in the Philippines and look at the budget alloted and spent on Government procurement projects. They will also be able to see how many projects are up for bidding, the total number of approved projects, and the total amount spent.\n\nWe are hoping that this project will increase government transparency and awareness on procurement projects." />
+
+</LinearLayout>
