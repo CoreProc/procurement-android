@@ -180,6 +180,7 @@ public class MapsFragment extends Fragment implements
                 @Override
                 public void onError(HttpClientError httpClientError) {
                     Toast.makeText(mContext, "Error: " + httpClientError.getCode(), Toast.LENGTH_SHORT).show();
+                    noLocationFound();
                 }
 
                 @Override
@@ -212,6 +213,16 @@ public class MapsFragment extends Fragment implements
         }
     }
 
+    private void noLocationFound() {
+        mBudgetAmountTextView.setText("-");
+        mSpentAmountTextView.setText("-");
+        mProjectsTextView.setText("-");
+        mApprovedProjectsTextView.setText("-");
+
+        mProvinceTextView.setText("Select another location");
+        mCategoryTextView.setText("");
+    }
+
     private void geocodeLatLng(LatLng target) {
         try {
 
@@ -226,11 +237,12 @@ public class MapsFragment extends Fragment implements
                 Log.i("procex", "I am at: " + mProvince);
 
                 mParams.put("province", mProvince);
+                return;
 
             } else {
                 Log.e("procex", "no location found");
                 mParams.put("province", "Metro Manila");
-
+                return;
             }
 
         } catch (IOException e) {
@@ -240,6 +252,7 @@ public class MapsFragment extends Fragment implements
         }
 
         mParams.put("province", "Metro Manila");
+        return;
     }
 
     @Override
